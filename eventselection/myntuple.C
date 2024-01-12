@@ -57,6 +57,7 @@ void myntuple::Loop()
 	TH1F* noOfMuons = new TH1F("noOfMuons","Number of muons per event/entry",100,0,10);
 	TH1F* vertex = new TH1F("vertex","Probability of 4-muon from same vertex",1000,0,1);
 
+	int CutFlowTotal = 0;
 	int CutFlow4Mu = 0;
 	int CutFlowTrig = 0;
 	int CutFlowVertex = 0;
@@ -64,7 +65,8 @@ void myntuple::Loop()
 	int CutFlowEta = 0;
 	int CutFlowCh = 0;
 	int CutFlowM = 0;
-
+	
+	std::cout<<"Total Number of events = "<<CutFlowTotal<<std::endl;
 	std::cout<<"Number of events after selection on muon No > 4 = "<<CutFlow4Mu<<std::endl;
 	std::cout<<"Number of events after selection on trigger = "<<CutFlowTrig<<std::endl;
 	std::cout<<"Number of events after selection on vertex probability = "<<CutFlowVertex<<std::endl;
@@ -165,6 +167,8 @@ void myntuple::Loop()
 			float DiMuonMass2 = 0.;
             double m4Muon = 0.;
 
+			CutFlowTotal = CutFlowTotal + 1;
+
 			// All selections applied
 			if (myNumPatSoftMuon >= 4) 
 			{
@@ -181,6 +185,7 @@ void myntuple::Loop()
 							if((abs(rawMup4vect[0].Eta())<=2.4 && abs(rawMup4vect[1].Eta())<=2.4 && abs(rawMup4vect[2].Eta())<=2.4 && abs(rawMup4vect[3].Eta())<=2.4))// Provide a selection on the eta
 							{
 								CutFlowEta = CutFlowEta + 1;
+								int tag = 0;
 								for (int mypidx = 0; mypidx < 3; mypidx++)  
 								{
 									int muIdxp11, muIdxp12, muIdxp21, muIdxp22;
@@ -191,7 +196,11 @@ void myntuple::Loop()
 										&& ((fitMuCharge[muIdxp21] + fitMuCharge[muIdxp22]) == 0)
 									)
 									{	
-										CutFlowCh = CutFlowCh + 1;
+										if(tag==0)
+										{
+											CutFlowCh = CutFlowCh + 1;
+											tag = tag + 1;
+										}
 										// Modify the DiMuonMass expression appropriatly. 
 										// Use the fitMup4vect and the muIdxpXY indexes defined above.
 										DiMuonMass1 = (fitMup4vect[muIdxp11] + fitMup4vect[muIdxp12]).M(); 
@@ -224,6 +233,8 @@ void myntuple::Loop()
 
 	}
 
+	
+	std::cout<<"Total Number of events = "<<CutFlowTotal<<std::endl;
 	std::cout<<"Number of events after selection on muon No > 4 = "<<CutFlow4Mu<<std::endl;
 	std::cout<<"Number of events after selection on trigger = "<<CutFlowTrig<<std::endl;
 	std::cout<<"Number of events after selection on vertex probability = "<<CutFlowVertex<<std::endl;
